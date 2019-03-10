@@ -30,3 +30,5 @@ media_player:
 - **posterdir**: is the directory on your homeassistant system to cache the posters, as my sagex API is not exposed to the internet, but homeassistant is 
 - **posterurl**: is the url of the posters directory
 - **extender**: is the extender code. Use 0 for a client instance on the server machine. Use the 12 digit code for an extender like an HD200. You can find the code for each of your extenders on the Nielm SageWebserver 
+
+All URLs and Directories must have trailing slash
