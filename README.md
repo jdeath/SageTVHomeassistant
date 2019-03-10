@@ -1,6 +1,6 @@
 # SageTV Support for Homeassistant
 
-I have (poorly) written components for SageTV . There is a media_player as well as a sensor which is compatible with [Lovelace: Upcoming Media Card](https://github.com/custom-cards/upcoming-media-card/README.md). It has been stable for a few days, so probably good enough to share with people. The media_player works well (play/pause/commercial skip) but I cannot get the media_seek function to work. Also, the poster blinks every once in a while.
+I have (poorly) written components for SageTV . There is a media_player as well as a sensor which is compatible with [Lovelace: Upcoming Media Card](https://github.com/custom-cards/upcoming-media-card/). It has been stable for a few days, so probably good enough to share with people. The media_player works well (play/pause/commercial skip) but I cannot get the media_seek function to work. Also, the poster blinks every once in a while.
 
 ## Installation
 
