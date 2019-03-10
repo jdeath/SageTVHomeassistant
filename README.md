@@ -8,7 +8,7 @@ Copy the `sensor.py` and `media_player.py` to your `custom_components` folder (`
 
 You must put `ha.js` in your SageTV sagex directory: `C:\Program Files (x86)\SageTV\SageTV\sagex\services\`
 
-Make a posters directory in your local webserver `.homeassistant/www/posters` to locally cache posters for the upcoming media card
+Make a posters directory in your local webserver `.homeassistant/www/posters/` to locally cache posters for the upcoming media card
 
 ## Configuration
 ```yaml
