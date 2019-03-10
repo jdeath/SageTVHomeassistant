@@ -4,7 +4,7 @@ I have (poorly) written components for SageTV . There is a media_player as well 
 
 ## Installation
 
-Copy the `sensor.py` and `media_player.py` to your `custom_components` folder (`custom_components/sagetv/`) in your configuration directory.  If you do not have a `custom_components/sagetv` folder, then you will need to create it.
+Copy the `sagetv/sensor.py` and `sagetv/media_player.py` to your `custom_components` folder (`custom_components/sagetv/`) in your configuration directory.  If you do not have a `custom_components/sagetv` folder, then you will need to create it.
 
 You must put `ha.js` in your SageTV sagex directory: `C:\Program Files (x86)\SageTV\SageTV\sagex\services\`
 
