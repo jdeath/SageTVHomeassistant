@@ -26,6 +26,9 @@ function GetNewShows() {
 for (var i=s-1;i>-1;i--) {
       var mf = files[i];
 
+if (MediaFileAPI.IsFileCurrentlyRecording(mf))
+ continue;
+ 
 airing = MediaFileAPI.GetMediaFileAiring(mf);
 airdate = AiringAPI.GetAiringStartTime(airing);
 d = new Date('Jan 1, 1970 GMT');
@@ -131,22 +134,25 @@ defaults.poster = "";
 defaults.title = "";
 defaults.duration = 0;
 defaults.watchedDuration= 0;
-defaults.isPlaying = "False";
+defaults.isPlaying = "idle";
 
 var UIContext =  Packages.sagex.UIContext;
-
+var context;
 var mf;
 var watchedDuration;
 if (extender == 0){
 var names = Global.GetConnectedClients();
+
 if (names.length == 0)
  return defaults;
-mf = MediaPlayerAPI.GetCurrentMediaFile(new UIContext(names[0]));
-watchedDuration = MediaPlayerAPI.GetRawMediaTime(new UIContext(names[0]))/1000;
+
+context = new UIContext(names[0]);
 }else{
-mf = MediaPlayerAPI.GetCurrentMediaFile(new UIContext(extender));
-watchedDuration = MediaPlayerAPI.GetRawMediaTime(new UIContext(extender))/1000;
+context = new UIContext(extender);
 }
+
+mf = MediaPlayerAPI.GetCurrentMediaFile(context);
+watchedDuration = MediaPlayerAPI.GetRawMediaTime(context)/1000;
 
 airing = MediaFileAPI.GetMediaFileAiring(mf);
 
@@ -160,14 +166,16 @@ title = AiringAPI.GetAiringTitle(airing);
 
 duration = MediaFileAPI.GetFileDuration(mf)/1000;
 
-var names = Global.GetConnectedClients();
-
-
 
 if(mediaID !=0){
 defaults.poster = posterURL;
 defaults.title = title;
-defaults.isPlaying = "True";
+if (MediaPlayerAPI.IsPlaying(context))
+defaults.isPlaying = "playing";
+else
+defaults.isPlaying = "paused";
+
+
 defaults.duration = duration;
 defaults.watchedDuration= watchedDuration;
 }
