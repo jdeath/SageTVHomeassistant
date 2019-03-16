@@ -73,23 +73,21 @@ class ExampleSensor(Entity):
         aLength = len(rawJson["Result"])
         for x in range(aLength-1):
                 title = rawJson["Result"][x+1]["title"]
+                origURL = rawJson["Result"][x+1]["poster"]
                 title = title.replace("'","-")
                 title = title.replace(":","-")
                 title = title.replace("&","-")
+                rawJson["Result"][x+1]["poster"] = baseURL + title
                 fileName = baseFile + title
-                origURL = rawJson["Result"][x+1]["poster"]
+                self.change_detected = True
+                self._state = len(rawJson["Result"]);
+                self.data = json.dumps(rawJson["Result"])
                 if not os.path.isfile(fileName):
                         url = requote_uri(origURL)
                         try:
                             urllib.request.urlretrieve(url, fileName)
                         except Exception as e:
                             pass
-                rawJson["Result"][x+1]["poster"] = baseURL + title
-
-        self.data = json.dumps(rawJson["Result"])
-        self.change_detected = True
-        self._state = len(rawJson["Result"]);
-
 
     @property
     def device_state_attributes(self):

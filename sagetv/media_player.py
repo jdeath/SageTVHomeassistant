@@ -97,21 +97,19 @@ class SageTV(MediaPlayerDevice):
         url = self._baseurl + 'sagex/api?c=ha:GetCurrentShow&1=' + self._extender + '&encoder=json'
         r = requests.get(url)
         rawJson = r.json()
-        sageState = rawJson["Result"]["isPlaying"]
-        if sageState == 'True':
-           self._state = STATE_PLAYING
-           self._media_title = rawJson["Result"]["title"]
-           self._poster = rawJson["Result"]["poster"]
-           self._duration = rawJson["Result"]["duration"]
-           self._position = rawJson["Result"]["watchedDuration"]
-        else:
-           self._state = STATE_IDLE
+        self._state = rawJson["Result"]["isPlaying"]
+        if self._state == 'idle':
            self._media_title = ''
            self._poster = ''
            self._duration = 0
            self._position = 0
-
-        self._position_valid = utcnow()
+        else:
+           if self._media_title != rawJson["Result"]["title"]:
+              self._media_title = rawJson["Result"]["title"]
+              self._poster = rawJson["Result"]["poster"]
+              self._duration = rawJson["Result"]["duration"]
+           self._position = rawJson["Result"]["watchedDuration"]
+           self._position_valid = utcnow()
 
     def media_play(self):
         """Send play command."""
