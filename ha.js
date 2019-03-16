@@ -49,9 +49,6 @@ mediaID = MediaFileAPI.GetMediaFileID(mf);
 
 posterURL = 'http://192.168.1.4:8080/sagex/media/fanart?artifact=poster&scalex=200&mediafile=' +mediaID;
 
-
-fanartURL = 'http://192.168.1.4:8080/sagex/media/banner/' +mediaID;
-
 season = MediaFileAPI.GetMediaFileMetadata(mf,'SeasonNumber');
 episode = MediaFileAPI.GetMediaFileMetadata(mf,'EpisodeNumber');
 
@@ -100,12 +97,12 @@ show = AiringAPI.GetShow(airing);
 episodeName = ShowAPI.GetShowEpisode(show);
 season = ShowAPI.GetShowSeasonNumber(show);
 episode = ShowAPI.GetShowEpisodeNumber(show);
+isMovie = ShowAPI.IsMovie(show);
 
+if (isMovie)
+posterURL = 'http://192.168.1.4:8080/sagex/media/fanart?artifact=poster&scalex=200&mediatype=movie&title=' +title ;
+else
 posterURL = 'http://192.168.1.4:8080/sagex/media/fanart?artifact=poster&scalex=200&mediatype=tv&title=' +title ;
-
-
-fanartURL = 'http://192.168.1.4:8080/sagex/media/banner/' +mediaID;
-
 
 
 reply += ' ' + posterURL;
