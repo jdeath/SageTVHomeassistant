@@ -49,6 +49,9 @@ mediaID = MediaFileAPI.GetMediaFileID(mf);
 
 posterURL = 'http://192.168.1.4:8080/sagex/media/fanart?artifact=poster&scalex=200&mediafile=' +mediaID;
 
+fanartURL = 'http://192.168.1.4:8080/sagex/media/fanart?artifact=background&scalex=200&mediafile=' +mediaID;
+
+
 season = MediaFileAPI.GetMediaFileMetadata(mf,'SeasonNumber');
 episode = MediaFileAPI.GetMediaFileMetadata(mf,'EpisodeNumber');
 
@@ -59,6 +62,7 @@ temp.title = title;
 temp.airdate = airdate;
 temp.episode = episodeName;
 temp.poster = posterURL;
+temp.fanart = fanartURL ;
 temp.number = 'S'+season+'E'+episode;
 temp.flag = 'false'
 temp.release = 'Recorded: $day, $time';
@@ -99,11 +103,19 @@ season = ShowAPI.GetShowSeasonNumber(show);
 episode = ShowAPI.GetShowEpisodeNumber(show);
 isMovie = ShowAPI.IsMovie(show);
 
-if (isMovie)
+if (isMovie){
 posterURL = 'http://192.168.1.4:8080/sagex/media/fanart?artifact=poster&scalex=200&mediatype=movie&title=' +title ;
-else
+
+fanartURL = 'http://192.168.1.4:8080/sagex/media/fanart?artifact=background&scalex=200&mediatype=movie&title=' +title ;
+
+
+}
+else{
 posterURL = 'http://192.168.1.4:8080/sagex/media/fanart?artifact=poster&scalex=200&mediatype=tv&title=' +title ;
 
+fanartURL = 'http://192.168.1.4:8080/sagex/media/fanart?artifact=background&scalex=200&mediatype=tv&title=' +title ;
+
+}
 
 reply += ' ' + posterURL;
 
@@ -112,6 +124,7 @@ temp.title = title;
 temp.airdate = airdate;
 temp.episode = episodeName;
 temp.poster = posterURL;
+temp.fanart = fanartURL;
 temp.number = 'S'+season+'E'+episode;
 temp.flag = 'false'
 temp.release = 'Upcomming: $day, $time';
