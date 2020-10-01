@@ -10,7 +10,7 @@ import requests
 import voluptuous as vol
 
 from homeassistant.components.media_player import (
-    MediaPlayerDevice, PLATFORM_SCHEMA)
+    MediaPlayerEntity, PLATFORM_SCHEMA)
 from homeassistant.components.media_player.const import (
     SUPPORT_PAUSE, SUPPORT_PLAY, SUPPORT_STOP,
     SUPPORT_TURN_OFF, SUPPORT_TURN_ON, SUPPORT_NEXT_TRACK, SUPPORT_PREVIOUS_TRACK, SUPPORT_SEEK)
@@ -43,7 +43,7 @@ def setup_platform(hass, config, add_entities, discovery_info=None):
     add_entities([SageTV( conf[CONF_NAME], conf[CONF_SAGEX], conf[CONF_EXTENDER])])
 
 
-class SageTV(MediaPlayerDevice):
+class SageTV(MediaPlayerEntity):
 
     def __init__(self, name, sagex, extender):
 
@@ -139,7 +139,7 @@ class SageTV(MediaPlayerDevice):
         r = requests.get(url)
 
     def async_media_seek(self,position):
-        url = self._baseurl + 'sagex/api?c=ha:Seek&1=' +  self._extender + '&2=' + int(position);
+        url = self._baseurl + 'sagex/api?c=ha:Seek&1=' +  self._extender + '&2=' + position;
         r = requests.get(url)
 
     @property
