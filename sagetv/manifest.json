@@ -1,0 +1,9 @@
+{
+  "domain": "sagetv",
+  "name": "SageTV Integration",
+  "config_flow": false,
+  "documentation": "https://github.com/jdeath/SageTVHomeassistant",
+  "requirements": [],
+  "codeowners": ["@jdeath"],
+  "quality_scale": "silver"
+}
