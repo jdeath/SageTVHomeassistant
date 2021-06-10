@@ -97,7 +97,13 @@ class ExampleSensor(Entity):
                         except Exception as e:
                             rawJson["Result"][x+1]["fanart"] = ''
                             pass
-
+                if aLength > 0:
+                    rawJson["Result"][0]["title_default"] = rawJson["Result"][0]["titledefault"]
+                    rawJson["Result"][0]["line1_default"] = rawJson["Result"][0]["line1default"]
+                    rawJson["Result"][0]["line2_default"] = rawJson["Result"][0]["line2default"]
+                    rawJson["Result"][0]["line3_default"] = rawJson["Result"][0]["line3default"]
+                    rawJson["Result"][0]["line4_default"] = rawJson["Result"][0]["line4default"]
+                    
                 self.data = json.dumps(rawJson["Result"])
 
     @property
