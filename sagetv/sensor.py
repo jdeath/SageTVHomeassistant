@@ -110,6 +110,7 @@ class ExampleSensor(Entity):
     def device_state_attributes(self):
         import math
         attributes = {}
+        attributes['data'] = self.data
         if self.change_detected:
                 attributes['data'] = self.data
                 self.change_detected = False
