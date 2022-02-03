@@ -8,8 +8,7 @@ import voluptuous as vol
 import homeassistant.helpers.config_validation as cv
 from urllib.request import urlretrieve
 from requests.utils import requote_uri
-from homeassistant.components.media_player import (
-    MediaPlayerDevice, PLATFORM_SCHEMA)
+from homeassistant.components.sensor import PLATFORM_SCHEMA
 
 CONF_SAGEX = 'sagex'
 CONF_POSTERDIR = 'posterdir'
@@ -110,7 +109,9 @@ class ExampleSensor(Entity):
     def extra_state_attributes(self):
         import math
         attributes = {}
+       
         if self.change_detected:
                 attributes['data'] = self.data
+                attributes["newdata"] = self.data
                 self.change_detected = False
         return attributes
