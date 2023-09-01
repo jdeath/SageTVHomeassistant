@@ -114,35 +114,35 @@ class SageTV(MediaPlayerEntity):
            self._position = rawJson["Result"]["watchedDuration"]
            self._position_valid = utcnow()
 
-    async def media_play(self):
+    async def async_media_play(self):
         """Send play command."""
         url = self._baseurl + 'sagex/api?c=ha:Command&1=play&2=' + self._extender
         session = async_get_clientsession(self.hass)
         resp = await session.get(url)
 
-    async def media_pause(self):
+    async def async_media_pause(self):
         """Send pause command."""
         url = self._baseurl + 'sagex/api?c=ha:Command&1=pause&2=' + self._extender
         session = async_get_clientsession(self.hass)
         resp = await session.get(url)
 
-    async def media_stop(self):
+    async def async_media_stop(self):
         """Send stop command."""
         url = self._baseurl + 'sagex/api?c=ha:Command&1=stop&2=' + self._extender
         session = async_get_clientsession(self.hass)
         resp = await session.get(url)
 
-    async def media_play_pause(self):
+    async def async_media_play_pause(self):
         url = self._baseurl + 'sagex/api?c=ha:PlayPause&1=' +  self._extender
         session = async_get_clientsession(self.hass)
         resp = await session.get(url)
 
-    async def media_next_track(self):
+    async def async_media_next_track(self):
         url = self._baseurl + 'sagex/api?c=ha:Command&1=Right&2=' +  self._extender
         session = async_get_clientsession(self.hass)
         resp = await session.get(url)
 
-    async def media_previous_track(self):
+    async def async_media_previous_track(self):
         url = self._baseurl + 'sagex/api?c=ha:Command&1=Left&2=' +  self._extender
         session = async_get_clientsession(self.hass)
         resp = await session.get(url)
