@@ -18,6 +18,7 @@ from homeassistant.const import (
     CONF_HOST, CONF_NAME, STATE_IDLE, STATE_OFF, STATE_PLAYING)
 import homeassistant.helpers.config_validation as cv
 from homeassistant.util.dt import utcnow
+from homeassistant.helpers.aiohttp_client import async_get_clientsession
 
 REQUIREMENTS = []
 CONF_EXTENDER = 'extender'
@@ -36,16 +37,16 @@ PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend({
 })
 
 
-def setup_platform(hass, config, add_entities, discovery_info=None):
+async def async_setup_platform(hass, config, async_add_entities, discovery_info=None):
     conf = discovery_info if discovery_info else config
 
     # Register configured device with Home Assistant.
-    add_entities([SageTV( conf[CONF_NAME], conf[CONF_SAGEX], conf[CONF_EXTENDER])])
+    async_add_entities([SageTV(hass, conf[CONF_NAME], conf[CONF_SAGEX], conf[CONF_EXTENDER])], True)
 
 
 class SageTV(MediaPlayerEntity):
 
-    def __init__(self, name, sagex, extender):
+    def __init__(self, hass, name, sagex, extender):
 
         # Default name value, only to be overridden by user.
         self._name = name
@@ -59,7 +60,7 @@ class SageTV(MediaPlayerEntity):
         self._media_title = ''
         self._title = ''
         self._poster = ''
-        self.update()
+        self.hass = hass
 
     @property
     def name(self):
@@ -91,12 +92,14 @@ class SageTV(MediaPlayerEntity):
         """When was the position of the current playing media valid."""
         return self._position_valid
 
-    def update(self):
+    async def async_update(self):
         """Update the internal state by querying the device."""
         # This can take 5+ seconds to complete
         url = self._baseurl + 'sagex/api?c=ha:GetCurrentShow&1=' + self._extender + '&encoder=json'
-        r = requests.get(url)
-        rawJson = r.json()
+        session = async_get_clientsession(self.hass)
+        resp = await session.get(url)
+        rawJson = await resp.json()
+        
         self._state = rawJson["Result"]["isPlaying"]
         if self._state == 'idle':
            self._media_title = ''
@@ -111,36 +114,43 @@ class SageTV(MediaPlayerEntity):
            self._position = rawJson["Result"]["watchedDuration"]
            self._position_valid = utcnow()
 
-    def media_play(self):
+    async def media_play(self):
         """Send play command."""
         url = self._baseurl + 'sagex/api?c=ha:Command&1=play&2=' + self._extender
-        r = requests.get(url)
+        session = async_get_clientsession(self.hass)
+        resp = await session.get(url)
 
-    def media_pause(self):
+    async def media_pause(self):
         """Send pause command."""
         url = self._baseurl + 'sagex/api?c=ha:Command&1=pause&2=' + self._extender
-        r = requests.get(url)
+        session = async_get_clientsession(self.hass)
+        resp = await session.get(url)
 
-    def media_stop(self):
+    async def media_stop(self):
         """Send stop command."""
         url = self._baseurl + 'sagex/api?c=ha:Command&1=stop&2=' + self._extender
-        r = requests.get(url)
+        session = async_get_clientsession(self.hass)
+        resp = await session.get(url)
 
-    def media_play_pause(self):
+    async def media_play_pause(self):
         url = self._baseurl + 'sagex/api?c=ha:PlayPause&1=' +  self._extender
-        r = requests.get(url)
+        session = async_get_clientsession(self.hass)
+        resp = await session.get(url)
 
-    def media_next_track(self):
+    async def media_next_track(self):
         url = self._baseurl + 'sagex/api?c=ha:Command&1=Right&2=' +  self._extender
-        r = requests.get(url)
+        session = async_get_clientsession(self.hass)
+        resp = await session.get(url)
 
-    def media_previous_track(self):
+    async def media_previous_track(self):
         url = self._baseurl + 'sagex/api?c=ha:Command&1=Left&2=' +  self._extender
-        r = requests.get(url)
+        session = async_get_clientsession(self.hass)
+        resp = await session.get(url)
 
-    def async_media_seek(self,position):
+    async def async_media_seek(self,position):
         url = self._baseurl + 'sagex/api?c=ha:Seek&1=' +  self._extender + '&2=' + position;
-        r = requests.get(url)
+        session = async_get_clientsession(self.hass)
+        resp = await session.get(url)
 
     @property
     def media_title(self):

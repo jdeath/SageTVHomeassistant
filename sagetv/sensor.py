@@ -9,6 +9,7 @@ import homeassistant.helpers.config_validation as cv
 from urllib.request import urlretrieve
 from requests.utils import requote_uri
 from homeassistant.components.sensor import PLATFORM_SCHEMA
+from homeassistant.helpers.aiohttp_client import async_get_clientsession
 
 CONF_SAGEX = 'sagex'
 CONF_POSTERDIR = 'posterdir'
@@ -21,16 +22,16 @@ PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend({
 })
 
 
-def setup_platform(hass, config, add_devices, discovery_info=None):
+async def async_setup_platform(hass, config, async_add_devices, discovery_info=None):
     """Setup the sensor platform."""
     conf = discovery_info if discovery_info else config
-    add_devices([ExampleSensor(conf[CONF_SAGEX],conf[CONF_POSTERDIR],conf[CONF_POSTERURL])])
+    async_add_devices([ExampleSensor(hass, conf[CONF_SAGEX],conf[CONF_POSTERDIR],conf[CONF_POSTERURL])], True)
 
 
 class ExampleSensor(Entity):
     """Representation of a Sensor."""
 
-    def __init__(self,sagex,posterdir,posterurl):
+    def __init__(self, hass, sagex,posterdir,posterurl):
         """Initialize the sensor."""
         self._state = None
         self._sagex = sagex
@@ -38,7 +39,8 @@ class ExampleSensor(Entity):
         self._posterurl = posterurl;
         self.data = None
         self.change_detected = True
-        self.update()
+        self.hass = hass
+    
     @property
     def name(self):
         """Return the name of the sensor."""
@@ -59,7 +61,7 @@ class ExampleSensor(Entity):
         """Return the icon to use in the frontend."""
         return 'mdi:calendar'
 
-    def update(self):
+    async def async_update(self):
         """Fetch new state data for the sensor.
 
         This is the only method that should fetch new data for Home Assistant.
@@ -67,8 +69,10 @@ class ExampleSensor(Entity):
         self._state = 1
         baseFile = self._posterdir
         baseURL =  self._posterurl
-        r = requests.get(self._sagex + 'sagex/api?c=ha:GetNewShows&encoder=json')
-        rawJson = r.json();
+    
+        session = async_get_clientsession(self.hass)
+        resp = await session.get(self._sagex + 'sagex/api?c=ha:GetNewShows&encoder=json')
+        rawJson = await resp.json()
         aLength = len(rawJson["Result"])
         for x in range(aLength-1):
                 title = rawJson["Result"][x+1]["title"]
@@ -107,7 +111,6 @@ class ExampleSensor(Entity):
 
     @property
     def extra_state_attributes(self):
-        import math
         attributes = {}
        
         if self.change_detected:
