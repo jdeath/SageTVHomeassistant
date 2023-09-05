@@ -10,6 +10,8 @@ from urllib.request import urlretrieve
 from requests.utils import requote_uri
 from homeassistant.components.sensor import PLATFORM_SCHEMA
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
+import logging
+_LOGGER = logging.getLogger(__name__)
 
 CONF_SAGEX = 'sagex'
 CONF_POSTERDIR = 'posterdir'
@@ -27,6 +29,15 @@ async def async_setup_platform(hass, config, async_add_devices, discovery_info=N
     conf = discovery_info if discovery_info else config
     async_add_devices([ExampleSensor(hass, conf[CONF_SAGEX],conf[CONF_POSTERDIR],conf[CONF_POSTERURL])], True)
 
+async def _download_file(sess, url, fileName):
+    async with sess as session:
+        async with session.get(url) as response:
+            with open(fileName, mode="wb") as file:
+                while True:
+                    chunk = await response.content.read()
+                    if not chunk:
+                        break
+                    file.write(chunk)
 
 class ExampleSensor(Entity):
     """Representation of a Sensor."""
@@ -90,15 +101,19 @@ class ExampleSensor(Entity):
                 if not os.path.isfile(fileName):
                         url = requote_uri(origURL)
                         try:
-                            urllib.request.urlretrieve(url, fileName)
+                            await _download_file(session, url, fileName)
+                            #urllib.request.urlretrieve(url, fileName)
                         except Exception as e:
+                            _LOGGER.error("URL Retrieve Error")
                             pass
                 if not os.path.isfile(fileNameFA):
                         url = requote_uri(origFAURL)
                         try:
-                            urllib.request.urlretrieve(url, fileNameFA)
+                            #urllib.request.urlretrieve(url, fileNameFA)
+                            await _download_file(session, url, fileNameFA)
                         except Exception as e:
                             rawJson["Result"][x+1]["fanart"] = ''
+                            _LOGGER.error("FA URL Retrieve Error")
                             pass
                 if aLength > 0:
                     rawJson["Result"][0]["title_default"] = rawJson["Result"][0]["titledefault"]
