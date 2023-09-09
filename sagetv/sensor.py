@@ -32,12 +32,13 @@ async def async_setup_platform(hass, config, async_add_devices, discovery_info=N
 async def _download_file(sess, url, fileName):
     async with sess as session:
         async with session.get(url) as response:
-            with open(fileName, mode="wb") as file:
-                while True:
-                    chunk = await response.content.read()
-                    if not chunk:
-                        break
-                    file.write(chunk)
+            if response.ok:
+                with open(fileName, mode="wb") as file:
+                    while True:
+                        chunk = await response.content.read()
+                        if not chunk:
+                            break
+                        file.write(chunk)
 
 class ExampleSensor(Entity):
     """Representation of a Sensor."""
