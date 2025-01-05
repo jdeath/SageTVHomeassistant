@@ -10,12 +10,24 @@ import requests
 import voluptuous as vol
 
 from homeassistant.components.media_player import (
-    MediaPlayerEntity, PLATFORM_SCHEMA)
-from homeassistant.components.media_player.const import (
-    SUPPORT_PAUSE, SUPPORT_PLAY, SUPPORT_STOP,
-    SUPPORT_TURN_OFF, SUPPORT_TURN_ON, SUPPORT_NEXT_TRACK, SUPPORT_PREVIOUS_TRACK, SUPPORT_SEEK)
+    MediaPlayerEntity, MediaPlayerEntityFeature,MediaPlayerState,PLATFORM_SCHEMA)
+    
+
+SUPPORT_SAGETV = (
+    MediaPlayerEntityFeature.PAUSE
+    | MediaPlayerEntityFeature.PREVIOUS_TRACK
+    | MediaPlayerEntityFeature.NEXT_TRACK
+    | MediaPlayerEntityFeature.STOP
+    | MediaPlayerEntityFeature.PLAY
+    | MediaPlayerEntityFeature.PLAY_MEDIA
+    | MediaPlayerEntityFeature.TURN_OFF
+    | MediaPlayerEntityFeature.TURN_ON
+    | MediaPlayerEntityFeature.SEEK
+)
+
 from homeassistant.const import (
-    CONF_HOST, CONF_NAME, STATE_IDLE, STATE_OFF, STATE_PLAYING)
+    CONF_HOST, CONF_NAME)
+    
 import homeassistant.helpers.config_validation as cv
 from homeassistant.util.dt import utcnow
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
@@ -28,7 +40,6 @@ SCAN_INTERVAL = timedelta(seconds=30)
 
 _LOGGER = logging.getLogger(__name__)
 
-SUPPORT_SAGETV = (SUPPORT_PLAY | SUPPORT_STOP | SUPPORT_PAUSE | SUPPORT_NEXT_TRACK | SUPPORT_PREVIOUS_TRACK | SUPPORT_SEEK)
 # No host is needed for configuration, however it can be set.
 PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend({
     vol.Required(CONF_SAGEX): cv.string,
@@ -53,7 +64,7 @@ class SageTV(MediaPlayerEntity):
         self._extender = extender
         self._baseurl = sagex
         # Assume we're off to start with
-        self._state = STATE_IDLE
+        self._state = MediaPlayerState.IDLE
         self._position = 0
         self._duration = 0
         self._position_valid = 0
@@ -61,7 +72,7 @@ class SageTV(MediaPlayerEntity):
         self._title = ''
         self._poster = ''
         self.hass = hass
-
+        
     @property
     def name(self):
         """Return the display name of this device."""
@@ -101,7 +112,7 @@ class SageTV(MediaPlayerEntity):
         rawJson = await resp.json()
         
         self._state = rawJson["Result"]["isPlaying"]
-        if self._state == 'idle':
+        if self._state == MediaPlayerState.IDLE:
            self._media_title = ''
            self._poster = ''
            self._duration = 0
